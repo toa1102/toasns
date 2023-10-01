@@ -19,6 +19,6 @@ def home():
     if request.method == 'POST':
         name = form.name.data
         like_anime = form.like_anime.data
-        rate = form.name.data
+        rate = form.rate.data
         return render_template('index.html', form=form, name=name, like_anime=like_anime, rate=rate)
     return render_template('index.html', form=form, name=name, like_anime=like_anime, rate=rate)
