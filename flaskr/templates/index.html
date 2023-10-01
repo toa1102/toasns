@@ -1,0 +1,29 @@
+<h1>好きなアニメ</h1>
+
+<!-- formタグの中でforms.pyのフォームを変数として再利用し、
+    フォームをレンダリングしている。 -->
+<form method='POST'>
+    {{form.name.label}} {{form.name()}}
+    <!-- views.pyから受け取った変数を{{name}}として再利用し、
+        HTMLに表示する形になっている。 -->
+    <br>
+    {{form.like_anime.label}} {{form.like_anime()}}
+    <br>
+    {{form.rate.label}} {{form.rate()}}
+    <br>
+    {{form.submit()}}
+</form>
+
+{% if name %}
+<p>{{name}}さんの好きなアニメは{{like_anime}}で、点数で言うと{{rate}}点くらいらしい</p>
+{% endif %}
+
+<!--
+    {{}}や{% if %}などはFlaskがラップしているJinjaというライブラリの記法であり、
+    HTML内で変数を利用した場合は変数を{{}}で囲み{{変数}}という形にし、
+    HTML内でifやfor文を使いたい場合は{% if %}のように記述し、
+    if文の終端として{% endif %}を付け加える必要がある。
+    普段Pythonしか使わない人は、
+    Pythonは特定の処理のブロックをインデントで表すので終端の意識がないかもしれないが、
+    JavaやGoと同じように{}で処理のブロックを決めていると思って頂ければ良いと思う。
+-->
