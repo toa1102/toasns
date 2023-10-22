@@ -22,3 +22,4 @@ def home():
         rate = form.rate.data
         return render_template('index.html', form=form, name=name, like_anime=like_anime, rate=rate)
     return render_template('index.html', form=form, name=name, like_anime=like_anime, rate=rate)
+

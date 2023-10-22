@@ -5,4 +5,4 @@ class LikeAnimeForm(Form):
     name = StringField('名前：')
     like_anime = StringField('好きなアニメは：')
     rate = IntegerField('点数をつけるなら：')
-
+    submit = SubmitField('送信')
