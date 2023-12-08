@@ -1,25 +1,49 @@
-from flask import Flask, render_template, request
-from flaskr.forms import LikeAnimeForm
+from flask import (
+    Flask, render_template, request, redirect, url_for, flash, 
+)
+from flask_login import login_required, login_user, logout_user, current_user
+from datetime import datetime
 
 app = Flask(__name__)
+from flaskr.models import db, User
+from flaskr.forms import (
+    LoginForm, RegisterForm
+)
 
-#@app.routeの引数にmethods=['GET', 'POST']を追加
-#これはユーザからフォームを介して変数を取得するので、
-#HTTPメソッドとしてPOSTを許可するという意味。
-@app.route('/', methods=['GET', 'POST'])
+
+@app.route('/', methods=['GET'])
 def home():
-    #フォームはform = LikeAnimeForm(request.form)という形で記述
-    #そのため、forms.pyからLikeAnimeFormとflaskライブラリからrequestをimportする必要がある。
-    #requestというのは、ユーザから送信された変数を取得するメソッドであり、
-    #フォームからの場合はrequest.formというプロパティを取得することになる。
-    form = LikeAnimeForm(request.form)
-    name = like_anime = rate = None
-    #ここから下でそれぞれフォームから取得した値を変数として宣言している。
-    #ここで作成した変数をrender_templateの引数でそれぞれ再びindex.htmlに返している。
-    if request.method == 'POST':
-        name = form.name.data
-        like_anime = form.like_anime.data
-        rate = form.rate.data
-        return render_template('index.html', form=form, name=name, like_anime=like_anime, rate=rate)
-    return render_template('index.html', form=form, name=name, like_anime=like_anime, rate=rate)
+    return render_template('home.html')
 
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm(request.form)
+    if request.method == 'POST' and form.validate():
+        email = form.email.data
+        password = form.password.data
+        user = User.select_by_email(email)
+        if user and user.check_password(password):
+            """ ユーザに対してログイン処理を施す """
+            login_user(user)
+            return redirect(url_for('home'))
+        elif user:
+            flash('パスワードが間違っています')
+        else:
+            flash('存在しないユーザです')
+    return render_template('login.html', form=form)
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegisterForm(request.form)
+    if request.method == 'POST' and form.validate():
+        username = form.username.data
+        email = form.email.data
+        password = form.password.data
+        user = User(username, email, password)
+        with db.session.begin(subtransactions=True):
+            db.session.add(user)
+        db.session.commit()
+        return redirect(url_for('login'))
+    return render_template('register.html', form=form)
